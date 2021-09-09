@@ -31,7 +31,7 @@ class Layout extends Component {
       return;
     }
     let date = new Date();
-    let taskId = date.getDate();
+    let taskId = date.getTime();
     let newTask = {
       id: taskId,
       name: currentTask
@@ -42,6 +42,15 @@ class Layout extends Component {
     this.setState({
       tasks: newTasks,
       task: ""
+    });
+  };
+
+  deleteTaskClickHandler = (event, taskId) => {
+    console.log(taskId);
+    let prevTasks = this.state.tasks;
+    let newTasks = prevTasks.filter((task) => task.id !== taskId);
+    this.setState({
+      tasks: newTasks
     });
   };
 
@@ -71,7 +80,12 @@ class Layout extends Component {
             return (
               <div key={task.id} className={styles.taskItem}>
                 <p>{task.name}</p>
-                <IconButton color="secondary">
+                <IconButton
+                  color="secondary"
+                  onClick={(event) =>
+                    this.deleteTaskClickHandler(event, task.id)
+                  }
+                >
                   <DeleteIcon />
                 </IconButton>
               </div>
