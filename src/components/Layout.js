@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import styles from "../components/Layout.module.css";
 import { TextField, Button, IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ReactPaginate from "react-paginate";
 
 class Layout extends Component {
   constructor(props) {
@@ -9,7 +10,8 @@ class Layout extends Component {
 
     this.state = {
       task: "",
-      tasks: []
+      tasks: [],
+      currentPage: 0
     };
   }
 
@@ -54,8 +56,49 @@ class Layout extends Component {
     });
   };
 
+  handlePageClick = ({ selected: selectedPage }) => {
+    this.setState({
+      currentPage: selectedPage
+    });
+  };
+
   render() {
-    const { task, tasks } = this.state;
+    const { task, tasks, currentPage } = this.state;
+    const PER_PAGE = 3;
+    const offset = currentPage * PER_PAGE;
+    const currentPageData =
+      tasks.length <= PER_PAGE
+        ? tasks.map((task) => {
+            return (
+              <div key={task.id} className={styles.taskItem}>
+                <p>{task.name}</p>
+                <IconButton
+                  color="secondary"
+                  onClick={(event) =>
+                    this.deleteTaskClickHandler(event, task.id)
+                  }
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            );
+          })
+        : tasks.slice(offset, offset + PER_PAGE).map((task) => {
+            return (
+              <div key={task.id} className={styles.taskItem}>
+                <p>{task.name}</p>
+                <IconButton
+                  color="secondary"
+                  onClick={(event) =>
+                    this.deleteTaskClickHandler(event, task.id)
+                  }
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            );
+          });
+    const pageCount = Math.ceil(tasks.length / PER_PAGE);
     return (
       <div className={styles.flexContainer}>
         <h1>React To-Do App</h1>
@@ -75,22 +118,21 @@ class Layout extends Component {
             Add
           </Button>
         </div>
-        <div className={styles.taskListContainer}>
-          {tasks.map((task) => {
-            return (
-              <div key={task.id} className={styles.taskItem}>
-                <p>{task.name}</p>
-                <IconButton
-                  color="secondary"
-                  onClick={(event) =>
-                    this.deleteTaskClickHandler(event, task.id)
-                  }
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
-            );
-          })}
+        <div className={styles.taskListContainer}>{currentPageData}</div>
+        <div>
+          {tasks.length > PER_PAGE && (
+            <ReactPaginate
+              previousLabel={"<"}
+              nextLabel={">"}
+              pageCount={pageCount}
+              onPageChange={this.handlePageClick}
+              activeClassName={styles.activeClassName}
+              containerClassName={styles.paginationContainer}
+              pageClassName={styles.pageClassName}
+              nextClassName={styles.nextClassName}
+              previousClassName={styles.previousClassName}
+            />
+          )}
         </div>
       </div>
     );
