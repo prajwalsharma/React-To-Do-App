@@ -1,0 +1,33 @@
+.flexContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.taskInputContainer {
+  background-color: #b0e6ff;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+  border-radius: 5px;
+}
+
+.taskListContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #b0e6ff;
+  margin: 15px 0 0 0;
+  width: 320px;
+  padding: 5px 15px 5px 15px;
+  word-break: break-all;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
