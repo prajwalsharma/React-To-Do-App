@@ -1,2 +1,8 @@
 # React-To-Do-App
-Created with CodeSandbox
+
+A basic To-Do app with not-so-basic functionalities:
+
+1. Material UI design
+2. Create & Delete ToDos
+3. Pagination
+4. Redux State Management
