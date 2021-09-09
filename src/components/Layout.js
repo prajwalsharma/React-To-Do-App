@@ -3,67 +3,17 @@ import styles from "../components/Layout.module.css";
 import { TextField, Button, IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ReactPaginate from "react-paginate";
+import {
+  addTaskImplementation,
+  deleteTaskImplementation,
+  setCurrentTask
+} from "../redux/ToDo/toDoActions";
+import { setCurrentPage } from "../redux/Pagination/paginationActions";
+import { connect } from "react-redux";
 
 class Layout extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      task: "",
-      tasks: [],
-      currentPage: 0
-    };
-  }
-
-  // Save current task in state
-  taskInputChangeHandler = (event) => {
-    this.setState(
-      {
-        task: event.target.value
-      },
-      () => console.log(this.state.task)
-    );
-  };
-
-  // Add task to list on button click
-  addTaskClickHandler = (event) => {
-    let currentTask = this.state.task;
-    if (currentTask.length === 0) {
-      alert("Task is empty!");
-      return;
-    }
-    let date = new Date();
-    let taskId = date.getTime();
-    let newTask = {
-      id: taskId,
-      name: currentTask
-    };
-    let previousTasks = this.state.tasks;
-    let newTasks = previousTasks.slice();
-    newTasks.push(newTask);
-    this.setState({
-      tasks: newTasks,
-      task: ""
-    });
-  };
-
-  deleteTaskClickHandler = (event, taskId) => {
-    console.log(taskId);
-    let prevTasks = this.state.tasks;
-    let newTasks = prevTasks.filter((task) => task.id !== taskId);
-    this.setState({
-      tasks: newTasks
-    });
-  };
-
-  handlePageClick = ({ selected: selectedPage }) => {
-    this.setState({
-      currentPage: selectedPage
-    });
-  };
-
   render() {
-    const { task, tasks, currentPage } = this.state;
+    const { task, tasks, currentPage } = this.props;
     const PER_PAGE = 3;
     const offset = currentPage * PER_PAGE;
     const currentPageData =
@@ -74,8 +24,8 @@ class Layout extends Component {
                 <p>{task.name}</p>
                 <IconButton
                   color="secondary"
-                  onClick={(event) =>
-                    this.deleteTaskClickHandler(event, task.id)
+                  onClick={() =>
+                    this.props.deleteTaskClickHandler(task.id, tasks)
                   }
                 >
                   <DeleteIcon />
@@ -89,8 +39,8 @@ class Layout extends Component {
                 <p>{task.name}</p>
                 <IconButton
                   color="secondary"
-                  onClick={(event) =>
-                    this.deleteTaskClickHandler(event, task.id)
+                  onClick={() =>
+                    this.props.deleteTaskClickHandler(task.id, tasks)
                   }
                 >
                   <DeleteIcon />
@@ -107,13 +57,15 @@ class Layout extends Component {
             id="outlined-basic"
             label="Enter task name..."
             variant="outlined"
-            onChange={(event) => this.taskInputChangeHandler(event)}
+            onChange={(event) =>
+              this.props.taskInputChangeHandler(event.target.value)
+            }
             value={task}
           />
           <Button
             variant="contained"
             color="primary"
-            onClick={(event) => this.addTaskClickHandler(event)}
+            onClick={() => this.props.addTaskClickHandler(task, tasks)}
           >
             Add
           </Button>
@@ -125,12 +77,12 @@ class Layout extends Component {
               previousLabel={"<"}
               nextLabel={">"}
               pageCount={pageCount}
-              onPageChange={this.handlePageClick}
+              onPageChange={this.props.handlePageClick}
               activeClassName={styles.activeClassName}
               containerClassName={styles.paginationContainer}
               pageClassName={styles.pageClassName}
               nextClassName={styles.nextClassName}
-              previousClassName={styles.previousClassName}
+              previousLinkClassName={styles.previousClassName}
             />
           )}
         </div>
@@ -139,4 +91,24 @@ class Layout extends Component {
   }
 }
 
-export default Layout;
+const mapStateToProps = (state) => {
+  return {
+    task: state.todo.task,
+    tasks: state.todo.tasks,
+    currentPage: state.pagination.currentPage
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addTaskClickHandler: (task, tasks) =>
+      dispatch(addTaskImplementation(task, tasks)),
+    deleteTaskClickHandler: (taskId, tasks) =>
+      dispatch(deleteTaskImplementation(taskId, tasks)),
+    taskInputChangeHandler: (task) => dispatch(setCurrentTask(task)),
+    handlePageClick: ({ selected: selectedPage }) =>
+      dispatch(setCurrentPage(selectedPage))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);
