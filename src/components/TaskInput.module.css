@@ -1,9 +1,3 @@
-.flexContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .taskInputContainer {
   background-color: #b0e6ff;
   padding: 20px;
@@ -13,9 +7,4 @@
   justify-content: space-between;
   width: 300px;
   border-radius: 5px;
-}
-
-.taskListContainer {
-  display: flex;
-  flex-direction: column;
 }
